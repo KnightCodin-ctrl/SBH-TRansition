@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100% Share Sale — Story Book Hollow Transition Workflow</title>
+<style>
+  :root {
+    --bg: #FAFAFA;
+    --text: #2C2C2C;
+    --text-light: #555;
+    --border: #4A4A4A;
+    --highlight: #8B4513;
+    --closing: #C4B7A6;
+    --closing-dark: #8B7D6B;
+    --first-order: #D4E5D2;
+    --first-order-dark: #5A7A5A;
+    --stabilize: #B5D4C5;
+    --stabilize-dark: #4A7A6A;
+    --integrate: #B0C8D4;
+    --integrate-dark: #4A6A8A;
+    --exit: #C2B8D4;
+    --exit-dark: #6A5A8A;
+    --chase: #0B4F9C;
+    --parents: #4A7A5A;
+    --staff: #C4956A;
+    --gov: #7A6A9A;
+    --white: #FFFFFF;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: #2C3E50;
+    color: var(--white);
+    padding: 24px 40px;
+    text-align: center;
+    border-bottom: 4px solid var(--highlight);
+  }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.3px; }
+  .header .subtitle { font-size: 13px; color: #B0C4DE; margin-top: 6px; font-style: italic; }
+
+  /* ===== TIMELINE BAR ===== */
+  .timeline-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 60px;
+    background: #F0EDE8;
+    border-bottom: 2px solid #DDD;
+    position: relative;
+  }
+  .timeline-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 60px;
+    right: 60px;
+    height: 3px;
+    background: var(--highlight);
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+  .milestone {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    background: #F0EDE8;
+    padding: 0 12px;
+  }
+  .milestone-dot {
+    width: 16px; height: 16px;
+    background: var(--highlight);
+    border-radius: 50%;
+    margin: 0 auto 4px;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--highlight);
+  }
+  .milestone-label { font-size: 11px; font-weight: 700; color: var(--highlight); }
+  .milestone-sub { font-size: 10px; color: var(--text-light); }
+
+  /* ===== MAIN CONTAINER ===== */
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+  /* ===== PHASE CARDS ===== */
+  .phase { margin-bottom: 28px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .phase-header {
+    padding: 14px 24px;
+    color: var(--white);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .phase-header .phase-title { font-size: 15px; }
+  .phase-header .phase-meta { font-size: 12px; opacity: 0.85; font-weight: 400; font-style: italic; }
+  .phase-body { padding: 20px 24px; background: var(--white); }
+
+  .phase-closing .phase-header { background: var(--closing-dark); }
+  .phase-first .phase-header { background: var(--highlight); }
+  .phase-stabilize .phase-header { background: var(--stabilize-dark); }
+  .phase-integrate .phase-header { background: var(--integrate-dark); }
+  .phase-exit .phase-header { background: var(--exit-dark); }
+
+  .phase-closing .phase-body { background: #FAF7F2; }
+  .phase-first .phase-body { background: #F5FAF4; }
+  .phase-stabilize .phase-body { background: #F2F8F5; }
+  .phase-integrate .phase-body { background: #F0F5F8; }
+  .phase-exit .phase-body { background: #F5F3FA; }
+
+  /* ===== LISTS ===== */
+  .phase-body ul { list-style: none; padding: 0; }
+  .phase-body li {
+    padding: 5px 0 5px 18px;
+    position: relative;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .phase-body li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--highlight);
+    font-weight: bold;
+  }
+  .phase-body li.sub::before { content: '\2014'; color: var(--text-light); }
+  .phase-body li.sub { padding-left: 28px; color: var(--text-light); font-size: 12px; }
+
+  /* ===== FIRST ORDER GRID ===== */
+  .first-order-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .workstream {
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--white);
+    border-left: 4px solid;
+  }
+  .workstream.ws-banking { border-color: var(--chase); }
+  .workstream.ws-parents { border-color: var(--parents); }
+  .workstream.ws-staff { border-color: var(--staff); }
+  .workstream.ws-gov { border-color: var(--gov); }
+
+  .workstream-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .workstream-subtitle {
+    font-size: 11px;
+    font-style: italic;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+  .ws-banking .workstream-title { color: var(--chase); }
+  .ws-banking .workstream-subtitle { color: var(--chase); }
+  .ws-parents .workstream-title { color: var(--parents); }
+  .ws-parents .workstream-subtitle { color: var(--parents); }
+  .ws-staff .workstream-title { color: var(--staff); }
+  .ws-staff .workstream-subtitle { color: var(--staff); }
+  .ws-gov .workstream-title { color: var(--gov); }
+  .ws-gov .workstream-subtitle { color: var(--gov); }
+
+  .workstream ul { list-style: none; padding: 0; }
+  .workstream li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+    font-size: 12.5px;
+  }
+  .workstream li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+  .ws-banking li::before { color: var(--chase); }
+  .ws-parents li::before { color: var(--parents); }
+  .ws-staff li::before { color: var(--staff); }
+  .ws-gov li::before { color: var(--gov); }
+
+  /* ===== ARROW DIVIDER ===== */
+  .arrow-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    color: var(--highlight);
+    font-size: 13px;
+    font-weight: 700;
+    gap: 12px;
+  }
+  .arrow-divider::before, .arrow-divider::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--highlight);
+    max-width: 120px;
+  }
+
+  /* ===== PRINCIPLES SECTION ===== */
+  .principles-section {
+    margin-top: 32px;
+    border: 3px solid var(--highlight);
+    border-radius: var(--radius);
+    padding: 24px;
+    background: #FDF8F2;
+  }
+  .principles-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--highlight);
+    margin-bottom: 20px;
+  }
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .principle-card {
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  .principle-header {
+    padding: 10px 8px;
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+  .principle-body {
+    padding: 12px 10px;
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .principle-card:nth-child(1) .principle-header { background: var(--parents); }
+  .principle-card:nth-child(2) .principle-header { background: #6A9A6A; }
+  .principle-card:nth-child(3) .principle-header { background: var(--staff); }
+  .principle-card:nth-child(4) .principle-header { background: var(--chase); }
+  .principle-card:nth-child(5) .principle-header { background: var(--gov); }
+
+  /* ===== RISKS BOX ===== */
+  .risks-box {
+    margin-top: 24px;
+    border: 2px solid var(--staff);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    background: #FFF8F0;
+  }
+  .risks-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--staff);
+    margin-bottom: 12px;
+  }
+  .risks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 30px;
+  }
+  .risk-item {
+    font-size: 12.5px;
+    padding: 6px 0;
+  }
+  .risk-label { font-weight: 700; color: var(--staff); }
+  .risk-mitigation { color: var(--text-light); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .first-order-grid { grid-template-columns: 1fr; }
+    .principles-grid { grid-template-columns: 1fr 1fr; }
+    .risks-grid { grid-template-columns: 1fr; }
+    .timeline-bar { padding: 16px 20px; }
+    .timeline-bar::before { left: 20px; right: 20px; }
+  }
+  @media (max-width: 600px) {
+    .principles-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 16px; }
+    .milestone-label { font-size: 9px; }
+  }
+
+  /* ===== EDIT HINT ===== */
+  .edit-hint {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    padding: 12px;
+    background: #F5F5F5;
+    border-top: 1px solid #DDD;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>100% Share Sale &mdash; STORY BOOK HOLLOW, INC &mdash; Non-Disruptive Ownership Transition</h1>
+  <div class="subtitle">Service-Based Industry | Clientele: Parents &amp; Children | Bank: BoA | Seller Transition: 60 Days</div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-bar">
+  <div class="milestone">
+    <div class="milestone-dot"></div>
+    <div class="milestone-label">T-0</div>
+    <div class="milestone-sub">CLOSING</div>
+  </div>
+  <div class="milestone">
+    <div class="milestone-dot"></div>
+    <div class="milestone-label">Day 1</div>
+    <div class="milestone-sub">ACTIVATE</div>
+  </div>
+  <div class="milestone">
+    <div class="milestone-dot"></div>
+    <div class="milestone-label">Day 30</div>
+    <div class="milestone-sub">STABLE</div>
+  </div>
+  <div class="milestone">
+    <div class="milestone-dot"></div>
+    <div class="milestone-label">Day 60</div>
+    <div class="milestone-sub">SELLER EXIT</div>
+  </div>
+  <div class="milestone">
+    <div class="milestone-dot"></div>
+    <div class="milestone-label">Day 90</div>
+    <div class="milestone-sub">INTEGRATED</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ==================== PHASE 1: CLOSING DAY ==================== -->
+  <div class="phase phase-closing">
+    <div class="phase-header">
+      <span class="phase-title">CLOSING DAY (T-0)</span>
+      <span class="phase-meta">Legal &amp; Financial Ownership Transfer</span>
+    </div>
+    <div class="phase-body">
+      <ul>
+        <li>Funds wire transfer: purchase price to seller</li>
+        <li>Share certificates: 100% ownership transfer executed & Resolution protocols</li>
+        <li>S-Corp Filings?: Ownershup change submitted</li>
+        <li>BoA Business Banking: authorize signing authority swap</li>
+        <li>Activate 60-day seller transition support protocol</li>
+        <li>Financials 1 : Operating Funds Agreement</li>
+        <li>Financials 2 : AR - EHS Quartery Reconciliation (What will be owed to the Seller</li>
+        <li>EHS Cadence : Agree on Cadence to address Early Head-Start (Federal Contract)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="arrow-divider">ACTIVATE &rarr; FIRST ORDER OF BUSINESS</div>
+
+  <!-- ==================== PHASE 2: FIRST ORDER OF BUSINESS ==================== -->
+  <div class="phase phase-first">
+    <div class="phase-header">
+      <span class="phase-title">FIRST ORDER OF BUSINESS (Day 1 &ndash; 3)</span>
+      <span class="phase-meta">Non-Disruptive Mandate | 60-Day Seller Transition Begins</span>
+    </div>
+    <div class="phase-body">
+      <div class="first-order-grid">
+
+        <!-- Banking -->
+        <div class="workstream ws-banking">
+          <div class="workstream-title">BANKING &amp; FINANCIAL CONTROL</div>
+          <div class="workstream-subtitle">BoA Business Banking</div>
+          <ul>
+            <li>Operating account: signing authority swap (buyer + existing signers)</li>
+            <li>BoA Online: credentials handover + 2FA reset</li>
+            <li>Treasury / merchant services: admin access transfer</li>
+            <li>Payroll funding: verify next payroll cycle fully funded</li>
+            <li>Credit line / cards: relationship manager introduction</li>
+            <li>Auto-payments (rent, utilities, supplies): confirm continuity</li>
+          </ul>
+        </div>
+
+        <!-- Parents -->
+        <div class="workstream ws-parents">
+          <div class="workstream-title">PARENT &amp; FAMILY COMMUNICATION</div>
+          <div class="workstream-subtitle">Joint Seller + Buyer | Carefully Worded</div>
+          <ul>
+            <li>Joint letter from Seller + Buyer to ALL parents (Day 1 AM)</li>
+            <li>Message: &ldquo;same teachers, same care, same safety standards&rdquo;</li>
+            <li>Reassure: enrollment agreements unchanged &amp; honored</li>
+            <li>Introduce new owner: background, vision, commitment to quality</li>
+            <li>Open door: parent Q&amp;A session offered (Week 1)</li>
+            <li>No changes to tuition, schedules, or classroom assignments</li>
+          </ul>
+        </div>
+
+        <!-- Staff -->
+        <div class="workstream ws-staff">
+          <div class="workstream-title">STAFF &amp; INTERNAL OPERATIONS</div>
+          <div class="workstream-subtitle">Teachers, Admin, Support Staff | To Be Scheduled Day 1&ndash;3</div>
+          <ul>
+            <li>All-staff meeting: <strong>scheduled flexibly</strong> (task callout, not fixed time)</li>
+            <li>Seller introduces buyer; continuity &amp; vision message</li>
+            <li>Open Q&amp;A; &ldquo;no surprises&rdquo; policy declared</li>
+            <li>1-on-1s with lead teachers &amp; admin staff (Days 1&ndash;3)</li>
+            <li>HR systems: admin access, personnel files, benefits portal</li>
+            <li>IT systems: domain admin, parent portal, security cameras, alarms</li>
+          </ul>
+        </div>
+
+        <!-- Governance -->
+        <div class="workstream ws-gov">
+          <div class="workstream-title">GOVERNANCE &amp; COMPLIANCE</div>
+          <div class="workstream-subtitle">Silent Transitions | Operations Never Pause</div>
+          <ul>
+            <li>Director Integration </li>
+            <li>Board minutes: first meeting under new ownership</li>
+            <li>Childcare license: Owner name change - state requirement (OCFS Licensor is aware and prepped)</li>
+            <li>Insurance: D&amp;O, E&amp;O, property, liability policy updates</li>
+            <li>Landlord: lease assignment / change of control notice</li>
+            <li>Data protection: parent records, FERPA / state privacy compliance</li>
+            <li>Audit trail: pre/post close snapshot documentation</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-divider">STABILIZE &rarr; DAYS 4&ndash;30</div>
+
+  <!-- ==================== PHASE 3: STABILIZATION ==================== -->
+  <div class="phase phase-stabilize">
+    <div class="phase-header">
+      <span class="phase-title">STABILIZATION (Days 4 &ndash; 30)</span>
+      <span class="phase-meta">Seller On-Site | Parent Confidence Building</span>
+    </div>
+    <div class="phase-body">
+      <ul>
+        <li>Parent open-door Q&amp;A session (Week 1)</li>
+        <li>Seller on-site: shadowing + introducing buyer to parents/staff (Days 1&ndash;20)</li>
+        <li>Lead teacher check-ins: retention pulse, satisfaction gauge</li>
+        <li>Full staff: benefits confirmed, payroll verified, culture pulse</li>
+        <li>Vendor continuity: food service, supplies, maintenance, cleaning</li>
+        <li>State childcare license: seamless owner change processing - OCFS Licensor already made aware</li>
+        <li>BoA account: full signing authority confirmed for buyer</li>
+        <li>Parent portal: new admin access live &amp; tested</li>
+        <li>Emergency contacts: updated for new ownership</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="arrow-divider">INTEGRATE &rarr; DAYS 20&ndash;60</div>
+
+  <!-- ==================== PHASE 4: INTEGRATION ==================== -->
+  <div class="phase phase-integrate">
+    <div class="phase-header">
+      <span class="phase-title">INTEGRATION (Days 20 &ndash; 60)</span>
+      <span class="phase-meta">Seller Gradual Exit | Buyer Takes Reins</span>
+    </div>
+    <div class="phase-body">
+      <ul>
+        <li>Seller transition: reduced on-site presence (Days 20&ndash;45)</li>
+        <li>Seller remote support: calls, introductions, guidance (Days 45&ndash;60)</li>
+        <li>Full parent roster: personal introductions complete</li>
+        <li>Operational rhythm: buyer fully hands-on daily management</li>
+        <li>Strategic planning: curriculum, enrichment programs, growth</li>
+        <li>Culture survey: staff sentiment &amp; concerns check</li>
+        <li>Key supplier contracts: novation or renewal decisions</li>
+        <li>Financial controls: buyer solo signature authority activated</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="arrow-divider">SELLER EXIT &rarr; DAY 60</div>
+
+  <!-- ==================== PHASE 5: SELLER EXIT ==================== -->
+  <div class="phase phase-exit">
+    <div class="phase-header">
+      <span class="phase-title">SELLER EXIT (Day 60)</span>
+      <span class="phase-meta">Seller Departs | Full Ownership Transitioned</span>
+    </div>
+    <div class="phase-body">
+      <ul>
+        <li>Day 60: seller transition support formally ends</li>
+        <li>Full buyer operational ownership: all systems, all decisions</li>
+        <li>Strategic planning: long-term vision &amp; growth roadmap</li>
+        <li>Governance: board meeting rhythm established under new ownership</li>
+        <li>Earn-out compliance tracking (if applicable)</li>
+        <li>Long-term staff incentive plan: design &amp; launch</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="arrow-divider">NORMALIZATION &rarr; DAY 90+</div>
+
+  <!-- ==================== PHASE 6: NORMALIZATION ==================== -->
+  <div class="phase" style="border: 2px solid var(--exit-dark); border-radius: var(--radius); overflow: hidden;">
+    <div class="phase-header" style="background: var(--exit-dark);">
+      <span class="phase-title">NORMALIZATION (Day 90+)</span>
+      <span class="phase-meta">Full Ownership | Ongoing Operations</span>
+    </div>
+    <div class="phase-body" style="background: #F8F6FA;">
+      <ul>
+        <li>Full operational ownership: autonomous day-to-day management</li>
+        <li>Annual strategic planning cycle established</li>
+        <li>Governance: regular board meetings, annual reviews</li>
+        <li>Staff: long-term incentives, career pathing, professional development</li>
+        <li>Growth: enrollment expansion, new programs, facility improvements</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== NON-DISRUPTIVE PRINCIPLES ==================== -->
+  <div class="principles-section">
+    <div class="principles-title">NON-DISRUPTIVE TRANSFER &mdash; PRESCHOOL-SPECIFIC CORE PRINCIPLES</div>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-header">TEACHERS FIRST</div>
+        <div class="principle-body">All-staff meeting before parent letter. No layoff rumors. Classroom assignments unchanged.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-header">PARENTS REASSURED</div>
+        <div class="principle-body">Joint seller+buyer letter. Same teachers, same care, same safety. Enrollment agreements honored fully.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-header">CHILDREN NEVER NOTICE</div>
+        <div class="principle-body">Classroom routines unchanged. Same faces at drop-off &amp; pick-up. No disruption to care quality.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-header">SYSTEMS SEAMLESS</div>
+        <div class="principle-body">Parent portal stays live. Cameras work. BoA auto-pays uninterrupted. Payroll always funds on time.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-header">GOVERNANCE SILENT</div>
+        <div class="principle-body">Childcare license change behind the scenes. Insurance: no gap coverage in-place. &amp; invisible.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KEY RISKS ==================== -->
+  <div class="risks-box">
+    <div class="risks-title">KEY RISKS &amp; MITIGATIONS</div>
+    <div class="risks-grid">
+      <div class="risk-item"><span class="risk-label">Parent churn &rarr;</span> <span class="risk-mitigation">Joint letter + same teachers + open-door Q&amp;A</span></div>
+      <div class="risk-item"><span class="risk-label">Teacher Retention &rarr;</span> <span class="risk-mitigation">Day 1 face time + contracts honored</span></div>
+      <div class="risk-item"><span class="risk-label">BoA banking freeze &rarr;</span> <span class="risk-mitigation">Pre-cleared relationship manager + signing authority swap</span></div>
+      <div class="risk-item"><span class="risk-label">System lockout &rarr;</span> <span class="risk-mitigation">Parallel admin access Day 0 + credential handover checklist</span></div>
+      <div class="risk-item"><span class="risk-label">State license Update &rarr;</span> <span class="risk-mitigation"> OCFS Licensor is in the loop and ready to make the change </span></div>
+      <div class="risk-item"><span class="risk-label">Seller departure shock &rarr;</span> <span class="risk-mitigation">60-day graduated exit: on-site &rarr; remote &rarr; clean handoff</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="edit-hint">
+  This is a self-contained HTML file. Open in any text editor to modify text, add/remove items, or adjust styling.
+</div>
+
+</body>
+</html>
